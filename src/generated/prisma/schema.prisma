@@ -1,0 +1,261 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model auditaction {
+  action_id   String     @id @db.VarChar(50)
+  description String?
+  auditlog    auditlog[]
+}
+
+model auditlog {
+  log_id        Int          @id @default(autoincrement())
+  user_id       Int?
+  session_id    Int?
+  action_id     String?      @db.VarChar(50)
+  target_id     Int
+  target_entity String?      @db.VarChar(50)
+  timestamp     DateTime?    @default(now()) @db.Timestamptz(6)
+  auditaction   auditaction? @relation(fields: [action_id], references: [action_id], onUpdate: NoAction)
+  sessions      sessions?    @relation(fields: [session_id], references: [session_id], onUpdate: NoAction)
+  users         users?       @relation(fields: [user_id], references: [user_id], onUpdate: NoAction)
+}
+
+model badge {
+  badge_id    Int         @id @default(autoincrement())
+  tour_id     Int?
+  badge_title String      @unique @db.VarChar(255)
+  description String
+  image_url   String
+  tour        tour?       @relation(fields: [tour_id], references: [tour_id], onUpdate: NoAction)
+  userbadge   userbadge[]
+}
+
+model checkpoint {
+  checkpoint_id         Int                     @id @default(autoincrement())
+  quiz_id               Int?
+  location_id           Int
+  points_reward         Int
+  created_at            DateTime?               @default(now()) @db.Timestamptz(6)
+  location              location                @relation(fields: [location_id], references: [location_id], onDelete: Cascade, onUpdate: NoAction)
+  quiz                  quiz?                   @relation(fields: [quiz_id], references: [quiz_id], onUpdate: NoAction)
+  tourcheckpoint        tourcheckpoint[]
+  usercheckpointattempt usercheckpointattempt[]
+}
+
+model location {
+  location_id     Int           @id @default(autoincrement())
+  location_name   String        @unique @db.VarChar(255)
+  locationtype_id String?       @db.VarChar(50)
+  description     String?
+  created_at      DateTime?     @default(now()) @db.Timestamptz(6)
+  checkpoint      checkpoint[]
+  locationtype    locationtype? @relation(fields: [locationtype_id], references: [locationtype_id], onUpdate: NoAction)
+}
+
+model locationtype {
+  locationtype_id String     @id @db.VarChar(50)
+  description     String?
+  location        location[]
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model no_of_completed_checkpoints {
+  count BigInt?
+
+  @@ignore
+}
+
+model permission {
+  permission_id   Int              @id
+  permission_name String           @unique @db.VarChar(100)
+  description     String?
+  rolepermission  rolepermission[]
+}
+
+model question {
+  question_id    Int              @id @default(autoincrement())
+  question       String
+  quiz_id        Int?
+  quiz           quiz?            @relation(fields: [quiz_id], references: [quiz_id], onUpdate: NoAction)
+  questionoption questionoption[]
+}
+
+model questionoption {
+  option_id   Int      @id @default(autoincrement())
+  option      String
+  is_correct  Boolean
+  question_id Int
+  question    question @relation(fields: [question_id], references: [question_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model quiz {
+  quiz_id            Int                  @id @default(autoincrement())
+  quiz_title         String               @unique @db.VarChar(255)
+  description        String?
+  checkpoint         checkpoint[]
+  question           question[]
+  userquizcompletion userquizcompletion[]
+}
+
+model review {
+  review_id   Int       @id @default(autoincrement())
+  user_id     Int?
+  tour_id     Int
+  review_text String
+  rating      Int
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  tour        tour      @relation(fields: [tour_id], references: [tour_id], onDelete: Cascade, onUpdate: NoAction)
+  users       users?    @relation(fields: [user_id], references: [user_id], onUpdate: NoAction)
+}
+
+model role {
+  role_id        Int              @id
+  role_name      String           @unique @db.VarChar(30)
+  description    String?
+  rolepermission rolepermission[]
+  userrole       userrole[]
+}
+
+model rolepermission {
+  role_id       Int
+  permission_id Int
+  created_at    DateTime?  @default(now()) @db.Timestamptz(6)
+  permission    permission @relation(fields: [permission_id], references: [permission_id], onDelete: Cascade, onUpdate: NoAction)
+  role          role       @relation(fields: [role_id], references: [role_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([role_id, permission_id])
+}
+
+model sessions {
+  session_id   Int        @id @default(autoincrement())
+  user_id      Int?
+  access_token String?    @db.VarChar(255)
+  is_active    Boolean?   @default(true)
+  login_at     DateTime?  @default(now()) @db.Timestamptz(6)
+  logout_at    DateTime?  @db.Timestamptz(6)
+  auditlog     auditlog[]
+  users        users?     @relation(fields: [user_id], references: [user_id], onUpdate: NoAction)
+}
+
+model tour {
+  tour_id            Int                  @id @default(autoincrement())
+  tour_name          String               @unique @db.VarChar(255)
+  description        String?
+  created_at         DateTime?            @default(now()) @db.Timestamptz(6)
+  badge              badge[]
+  review             review[]
+  tourcheckpoint     tourcheckpoint[]
+  usertourcompletion usertourcompletion[]
+}
+
+model tourcheckpoint {
+  tour_id          Int
+  checkpoint_id    Int
+  checkpoint_order Int
+  checkpoint       checkpoint @relation(fields: [checkpoint_id], references: [checkpoint_id], onDelete: Cascade, onUpdate: NoAction)
+  tour             tour       @relation(fields: [tour_id], references: [tour_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([tour_id, checkpoint_id])
+}
+
+model userbadge {
+  badge_id   Int
+  user_id    Int
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  badge      badge     @relation(fields: [badge_id], references: [badge_id], onDelete: Cascade, onUpdate: NoAction)
+  users      users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([badge_id, user_id])
+}
+
+model usercheckpointattempt {
+  checkpointattempt_id Int                @id @default(autoincrement())
+  user_id              Int
+  checkpoint_id        Int?
+  tourcompletion_id    Int
+  created_at           DateTime?          @default(now()) @db.Timestamptz(6)
+  checkpoint           checkpoint?        @relation(fields: [checkpoint_id], references: [checkpoint_id], onUpdate: NoAction)
+  usertourcompletion   usertourcompletion @relation(fields: [tourcompletion_id], references: [tourcompletion_id], onDelete: Cascade, onUpdate: NoAction)
+  users                users              @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model userprofile {
+  profile_id Int       @id @default(autoincrement())
+  user_id    Int       @unique
+  points     Int?      @default(0)
+  level      Int?      @default(0)
+  first_name String    @db.VarChar(100)
+  last_name  String    @db.VarChar(100)
+  school     String?   @db.VarChar(255)
+  sec_level  sec_level
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @db.Timestamptz(6)
+  users      users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model userquizcompletion {
+  quizcompletion_id Int       @id @default(autoincrement())
+  quiz_id           Int
+  user_id           Int
+  score             Int
+  created_at        DateTime? @default(now()) @db.Timestamptz(6)
+  quiz              quiz      @relation(fields: [quiz_id], references: [quiz_id], onDelete: Cascade, onUpdate: NoAction)
+  users             users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model userrole {
+  user_id    Int       @unique
+  role_id    Int       @default(2)
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  role       role      @relation(fields: [role_id], references: [role_id], onDelete: SetDefault, onUpdate: NoAction)
+  users      users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_id, role_id])
+}
+
+model users {
+  user_id               Int                     @id @default(autoincrement())
+  username              String                  @unique @db.VarChar(30)
+  email                 String                  @unique @db.VarChar(255)
+  password              String                  @db.Char(60)
+  is_verified           Boolean?                @default(false)
+  created_at            DateTime?               @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime?               @db.Timestamptz(6)
+  auditlog              auditlog[]
+  review                review[]
+  sessions              sessions[]
+  userbadge             userbadge[]
+  usercheckpointattempt usercheckpointattempt[]
+  userprofile           userprofile?
+  userquizcompletion    userquizcompletion[]
+  userrole              userrole?
+  usertourcompletion    usertourcompletion[]
+}
+
+model usertourcompletion {
+  tourcompletion_id     Int                     @id @default(autoincrement())
+  user_id               Int
+  tour_id               Int?
+  completed             Boolean?                @default(false)
+  completed_at          DateTime?               @db.Timestamptz(6)
+  created_at            DateTime?               @default(now()) @db.Timestamptz(6)
+  usercheckpointattempt usercheckpointattempt[]
+  tour                  tour?                   @relation(fields: [tour_id], references: [tour_id], onUpdate: NoAction)
+  users                 users                   @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+enum sec_level {
+  Sec1
+  Sec2
+  Sec3
+  Sec4
+  Sec5
+  Other
+}
