@@ -120,6 +120,17 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.CountryScalarFieldEnum = {
+  countryName: 'countryName',
+  language: 'language',
+  region: 'region'
+};
+
+exports.Prisma.RelationLoadStrategy = {
+  query: 'query',
+  join: 'join'
+};
+
 exports.Prisma.CourseScalarFieldEnum = {
   crseCode: 'crseCode',
   crseName: 'crseName',
@@ -137,6 +148,18 @@ exports.Prisma.DepartmentScalarFieldEnum = {
   budget: 'budget',
   expenditure: 'expenditure',
   hodApptDate: 'hodApptDate'
+};
+
+exports.Prisma.ModuleScalarFieldEnum = {
+  modCode: 'modCode',
+  modName: 'modName',
+  creditUnit: 'creditUnit',
+  modCoord: 'modCoord'
+};
+
+exports.Prisma.PreRequisiteScalarFieldEnum = {
+  modCode: 'modCode',
+  requisite: 'requisite'
 };
 
 exports.Prisma.StaffScalarFieldEnum = {
@@ -177,40 +200,17 @@ exports.Prisma.StaffBackupScalarFieldEnum = {
   designation: 'designation'
 };
 
-exports.Prisma.UserAccountScalarFieldEnum = {
-  id: 'id',
-  accountNo: 'accountNo',
-  role: 'role',
-  password: 'password'
-};
-
-exports.Prisma.UserRoleScalarFieldEnum = {
-  id: 'id',
-  name: 'name'
-};
-
-exports.Prisma.ModuleScalarFieldEnum = {
-  modCode: 'modCode',
-  modName: 'modName',
-  creditUnit: 'creditUnit',
-  modCoord: 'modCoord'
-};
-
 exports.Prisma.StaffDependentScalarFieldEnum = {
   staffNo: 'staffNo',
   dependentName: 'dependentName',
   relationship: 'relationship'
 };
 
-exports.Prisma.PreRequisiteScalarFieldEnum = {
-  modCode: 'modCode',
-  requisite: 'requisite'
-};
-
-exports.Prisma.CountryScalarFieldEnum = {
-  countryName: 'countryName',
-  language: 'language',
-  region: 'region'
+exports.Prisma.StudModPerformanceScalarFieldEnum = {
+  admNo: 'admNo',
+  modRegistered: 'modRegistered',
+  mark: 'mark',
+  grade: 'grade'
 };
 
 exports.Prisma.StudentScalarFieldEnum = {
@@ -225,11 +225,16 @@ exports.Prisma.StudentScalarFieldEnum = {
   crseCode: 'crseCode'
 };
 
-exports.Prisma.StudModPerformanceScalarFieldEnum = {
-  admNo: 'admNo',
-  modRegistered: 'modRegistered',
-  mark: 'mark',
-  grade: 'grade'
+exports.Prisma.UserAccountScalarFieldEnum = {
+  id: 'id',
+  accountNo: 'accountNo',
+  role: 'role',
+  password: 'password'
+};
+
+exports.Prisma.UserRoleScalarFieldEnum = {
+  id: 'id',
+  name: 'name'
 };
 
 exports.Prisma.SortOrder = {
@@ -249,18 +254,18 @@ exports.Prisma.NullsOrder = {
 
 
 exports.Prisma.ModelName = {
+  country: 'country',
   course: 'course',
   department: 'department',
+  module: 'module',
+  preRequisite: 'preRequisite',
   staff: 'staff',
   staffBackup: 'staffBackup',
-  userAccount: 'userAccount',
-  userRole: 'userRole',
-  module: 'module',
   staffDependent: 'staffDependent',
-  preRequisite: 'preRequisite',
-  country: 'country',
+  studModPerformance: 'studModPerformance',
   student: 'student',
-  studModPerformance: 'studModPerformance'
+  userAccount: 'userAccount',
+  userRole: 'userRole'
 };
 
 /**
