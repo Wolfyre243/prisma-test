@@ -120,176 +120,116 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.AuditactionScalarFieldEnum = {
-  action_id: 'action_id',
-  description: 'description'
+exports.Prisma.CourseScalarFieldEnum = {
+  crseCode: 'crseCode',
+  crseName: 'crseName',
+  offeredBy: 'offeredBy',
+  crseFee: 'crseFee',
+  labFee: 'labFee'
 };
 
-exports.Prisma.AuditlogScalarFieldEnum = {
-  log_id: 'log_id',
-  user_id: 'user_id',
-  session_id: 'session_id',
-  action_id: 'action_id',
-  target_id: 'target_id',
-  target_entity: 'target_entity',
-  timestamp: 'timestamp'
+exports.Prisma.DepartmentScalarFieldEnum = {
+  deptCode: 'deptCode',
+  deptName: 'deptName',
+  hod: 'hod',
+  noOfStaff: 'noOfStaff',
+  maxStaffStrength: 'maxStaffStrength',
+  budget: 'budget',
+  expenditure: 'expenditure',
+  hodApptDate: 'hodApptDate'
 };
 
-exports.Prisma.BadgeScalarFieldEnum = {
-  badge_id: 'badge_id',
-  tour_id: 'tour_id',
-  badge_title: 'badge_title',
-  description: 'description',
-  image_url: 'image_url'
+exports.Prisma.StaffScalarFieldEnum = {
+  staffNo: 'staffNo',
+  staffName: 'staffName',
+  supervisorStaffNo: 'supervisorStaffNo',
+  dob: 'dob',
+  grade: 'grade',
+  maritalStatus: 'maritalStatus',
+  pay: 'pay',
+  allowance: 'allowance',
+  hourlyRate: 'hourlyRate',
+  gender: 'gender',
+  citizenship: 'citizenship',
+  joinYr: 'joinYr',
+  deptCode: 'deptCode',
+  typeOfEmployment: 'typeOfEmployment',
+  highestQln: 'highestQln',
+  designation: 'designation'
 };
 
-exports.Prisma.CheckpointScalarFieldEnum = {
-  checkpoint_id: 'checkpoint_id',
-  quiz_id: 'quiz_id',
-  location_id: 'location_id',
-  points_reward: 'points_reward',
-  created_at: 'created_at'
+exports.Prisma.StaffBackupScalarFieldEnum = {
+  staffNo: 'staffNo',
+  staffName: 'staffName',
+  supervisor: 'supervisor',
+  dob: 'dob',
+  grade: 'grade',
+  maritalStatus: 'maritalStatus',
+  pay: 'pay',
+  allowance: 'allowance',
+  hourlyRate: 'hourlyRate',
+  gender: 'gender',
+  citizenship: 'citizenship',
+  joinYr: 'joinYr',
+  deptCode: 'deptCode',
+  typeOfEmployment: 'typeOfEmployment',
+  highestQln: 'highestQln',
+  designation: 'designation'
 };
 
-exports.Prisma.LocationScalarFieldEnum = {
-  location_id: 'location_id',
-  location_name: 'location_name',
-  locationtype_id: 'locationtype_id',
-  description: 'description',
-  created_at: 'created_at'
+exports.Prisma.UserAccountScalarFieldEnum = {
+  id: 'id',
+  accountNo: 'accountNo',
+  role: 'role',
+  password: 'password'
 };
 
-exports.Prisma.LocationtypeScalarFieldEnum = {
-  locationtype_id: 'locationtype_id',
-  description: 'description'
+exports.Prisma.UserRoleScalarFieldEnum = {
+  id: 'id',
+  name: 'name'
 };
 
-exports.Prisma.PermissionScalarFieldEnum = {
-  permission_id: 'permission_id',
-  permission_name: 'permission_name',
-  description: 'description'
+exports.Prisma.ModuleScalarFieldEnum = {
+  modCode: 'modCode',
+  modName: 'modName',
+  creditUnit: 'creditUnit',
+  modCoord: 'modCoord'
 };
 
-exports.Prisma.QuestionScalarFieldEnum = {
-  question_id: 'question_id',
-  question: 'question',
-  quiz_id: 'quiz_id'
+exports.Prisma.StaffDependentScalarFieldEnum = {
+  staffNo: 'staffNo',
+  dependentName: 'dependentName',
+  relationship: 'relationship'
 };
 
-exports.Prisma.QuestionoptionScalarFieldEnum = {
-  option_id: 'option_id',
-  option: 'option',
-  is_correct: 'is_correct',
-  question_id: 'question_id'
+exports.Prisma.PreRequisiteScalarFieldEnum = {
+  modCode: 'modCode',
+  requisite: 'requisite'
 };
 
-exports.Prisma.QuizScalarFieldEnum = {
-  quiz_id: 'quiz_id',
-  quiz_title: 'quiz_title',
-  description: 'description'
+exports.Prisma.CountryScalarFieldEnum = {
+  countryName: 'countryName',
+  language: 'language',
+  region: 'region'
 };
 
-exports.Prisma.ReviewScalarFieldEnum = {
-  review_id: 'review_id',
-  user_id: 'user_id',
-  tour_id: 'tour_id',
-  review_text: 'review_text',
-  rating: 'rating',
-  created_at: 'created_at'
+exports.Prisma.StudentScalarFieldEnum = {
+  admNo: 'admNo',
+  studName: 'studName',
+  gender: 'gender',
+  address: 'address',
+  mobilePhone: 'mobilePhone',
+  homePhone: 'homePhone',
+  dob: 'dob',
+  nationality: 'nationality',
+  crseCode: 'crseCode'
 };
 
-exports.Prisma.RoleScalarFieldEnum = {
-  role_id: 'role_id',
-  role_name: 'role_name',
-  description: 'description'
-};
-
-exports.Prisma.RolepermissionScalarFieldEnum = {
-  role_id: 'role_id',
-  permission_id: 'permission_id',
-  created_at: 'created_at'
-};
-
-exports.Prisma.SessionsScalarFieldEnum = {
-  session_id: 'session_id',
-  user_id: 'user_id',
-  access_token: 'access_token',
-  is_active: 'is_active',
-  login_at: 'login_at',
-  logout_at: 'logout_at'
-};
-
-exports.Prisma.TourScalarFieldEnum = {
-  tour_id: 'tour_id',
-  tour_name: 'tour_name',
-  description: 'description',
-  created_at: 'created_at'
-};
-
-exports.Prisma.TourcheckpointScalarFieldEnum = {
-  tour_id: 'tour_id',
-  checkpoint_id: 'checkpoint_id',
-  checkpoint_order: 'checkpoint_order'
-};
-
-exports.Prisma.UserbadgeScalarFieldEnum = {
-  badge_id: 'badge_id',
-  user_id: 'user_id',
-  created_at: 'created_at'
-};
-
-exports.Prisma.UsercheckpointattemptScalarFieldEnum = {
-  checkpointattempt_id: 'checkpointattempt_id',
-  user_id: 'user_id',
-  checkpoint_id: 'checkpoint_id',
-  tourcompletion_id: 'tourcompletion_id',
-  created_at: 'created_at'
-};
-
-exports.Prisma.UserprofileScalarFieldEnum = {
-  profile_id: 'profile_id',
-  user_id: 'user_id',
-  points: 'points',
-  level: 'level',
-  first_name: 'first_name',
-  last_name: 'last_name',
-  school: 'school',
-  sec_level: 'sec_level',
-  created_at: 'created_at',
-  updated_at: 'updated_at'
-};
-
-exports.Prisma.UserquizcompletionScalarFieldEnum = {
-  quizcompletion_id: 'quizcompletion_id',
-  quiz_id: 'quiz_id',
-  user_id: 'user_id',
-  score: 'score',
-  created_at: 'created_at'
-};
-
-exports.Prisma.UserroleScalarFieldEnum = {
-  user_id: 'user_id',
-  role_id: 'role_id',
-  created_at: 'created_at'
-};
-
-exports.Prisma.UsersScalarFieldEnum = {
-  user_id: 'user_id',
-  username: 'username',
-  email: 'email',
-  password: 'password',
-  is_verified: 'is_verified',
-  created_at: 'created_at',
-  updated_at: 'updated_at'
-};
-
-exports.Prisma.UsertourcompletionScalarFieldEnum = {
-  tourcompletion_id: 'tourcompletion_id',
-  user_id: 'user_id',
-  tour_id: 'tour_id',
-  completed: 'completed',
-  completed_at: 'completed_at',
-  created_at: 'created_at'
+exports.Prisma.StudModPerformanceScalarFieldEnum = {
+  admNo: 'admNo',
+  modRegistered: 'modRegistered',
+  mark: 'mark',
+  grade: 'grade'
 };
 
 exports.Prisma.SortOrder = {
@@ -306,39 +246,21 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-exports.sec_level = exports.$Enums.sec_level = {
-  Sec1: 'Sec1',
-  Sec2: 'Sec2',
-  Sec3: 'Sec3',
-  Sec4: 'Sec4',
-  Sec5: 'Sec5',
-  Other: 'Other'
-};
+
 
 exports.Prisma.ModelName = {
-  auditaction: 'auditaction',
-  auditlog: 'auditlog',
-  badge: 'badge',
-  checkpoint: 'checkpoint',
-  location: 'location',
-  locationtype: 'locationtype',
-  permission: 'permission',
-  question: 'question',
-  questionoption: 'questionoption',
-  quiz: 'quiz',
-  review: 'review',
-  role: 'role',
-  rolepermission: 'rolepermission',
-  sessions: 'sessions',
-  tour: 'tour',
-  tourcheckpoint: 'tourcheckpoint',
-  userbadge: 'userbadge',
-  usercheckpointattempt: 'usercheckpointattempt',
-  userprofile: 'userprofile',
-  userquizcompletion: 'userquizcompletion',
-  userrole: 'userrole',
-  users: 'users',
-  usertourcompletion: 'usertourcompletion'
+  course: 'course',
+  department: 'department',
+  staff: 'staff',
+  staffBackup: 'staffBackup',
+  userAccount: 'userAccount',
+  userRole: 'userRole',
+  module: 'module',
+  staffDependent: 'staffDependent',
+  preRequisite: 'preRequisite',
+  country: 'country',
+  student: 'student',
+  studModPerformance: 'studModPerformance'
 };
 
 /**

@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions", "relationJoins"]
 }
 
 datasource db {
@@ -8,254 +8,159 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model auditaction {
-  action_id   String     @id @db.VarChar(50)
-  description String?
-  auditlog    auditlog[]
+model country {
+  countryName String    @id @map("country_name") @db.VarChar(30)
+  language    String    @db.VarChar(30)
+  region      String    @db.VarChar(30)
+  student     student[]
 }
 
-model auditlog {
-  log_id        Int          @id @default(autoincrement())
-  user_id       Int?
-  session_id    Int?
-  action_id     String?      @db.VarChar(50)
-  target_id     Int
-  target_entity String?      @db.VarChar(50)
-  timestamp     DateTime?    @default(now()) @db.Timestamptz(6)
-  auditaction   auditaction? @relation(fields: [action_id], references: [action_id], onUpdate: NoAction)
-  sessions      sessions?    @relation(fields: [session_id], references: [session_id], onUpdate: NoAction)
-  users         users?       @relation(fields: [user_id], references: [user_id], onUpdate: NoAction)
+model course {
+  crseCode  String   @id @map("crse_code") @db.VarChar(5)
+  crseName  String   @map("crse_name") @db.VarChar(100)
+  offeredBy String   @map("offered_by") @db.VarChar(5)
+  crseFee   Decimal  @map("crse_fee") @db.Decimal(7, 2)
+  labFee    Decimal? @map("lab_fee") @db.Decimal(7, 2)
+
+  department department @relation(fields: [offeredBy], references: [deptCode], onDelete: NoAction, onUpdate: NoAction, map: "course_offered_by_fk")
+  student    student[]
 }
 
-model badge {
-  badge_id    Int         @id @default(autoincrement())
-  tour_id     Int?
-  badge_title String      @unique @db.VarChar(255)
-  description String
-  image_url   String
-  tour        tour?       @relation(fields: [tour_id], references: [tour_id], onUpdate: NoAction)
-  userbadge   userbadge[]
+model department {
+  deptCode         String    @id @map("dept_code") @db.VarChar(5)
+  deptName         String    @map("dept_name") @db.VarChar(100)
+  hod              String    @db.Char(4)
+  noOfStaff        Int?      @map("no_of_staff")
+  maxStaffStrength Int?      @map("max_staff_strength")
+  budget           Decimal?  @db.Decimal(9, 2)
+  expenditure      Decimal?  @db.Decimal(9, 2)
+  hodApptDate      DateTime? @map("hod_appt_date") @db.Date
+
+  course                    course[]
+  departmentHodToStaff      staff    @relation("departmentHodToStaff", fields: [hod], references: [staffNo], onDelete: NoAction, onUpdate: NoAction, map: "dept_hod_fk")
+  staffDeptCodeToDepartment staff[]  @relation("staffDeptCodeToDepartment")
 }
 
-model checkpoint {
-  checkpoint_id         Int                     @id @default(autoincrement())
-  quiz_id               Int?
-  location_id           Int
-  points_reward         Int
-  created_at            DateTime?               @default(now()) @db.Timestamptz(6)
-  location              location                @relation(fields: [location_id], references: [location_id], onDelete: Cascade, onUpdate: NoAction)
-  quiz                  quiz?                   @relation(fields: [quiz_id], references: [quiz_id], onUpdate: NoAction)
-  tourcheckpoint        tourcheckpoint[]
-  usercheckpointattempt usercheckpointattempt[]
+model module {
+  modCode    String  @id @map("mod_code") @db.VarChar(10)
+  modName    String  @map("mod_name") @db.VarChar(100)
+  creditUnit Int     @map("credit_unit")
+  modCoord   String? @map("mod_coord") @db.Char(4)
+
+  staff                         staff?               @relation(fields: [modCoord], references: [staffNo], onDelete: NoAction, onUpdate: NoAction, map: "mod_mod_coord_fk")
+  preRequisiteModCodeToModule   preRequisite[]       @relation("preRequisiteModCodeToModule")
+  preRequisiteRequisiteToModule preRequisite[]       @relation("preRequisiteRequisiteToModule")
+  studModPerformance            studModPerformance[]
 }
 
-model location {
-  location_id     Int           @id @default(autoincrement())
-  location_name   String        @unique @db.VarChar(255)
-  locationtype_id String?       @db.VarChar(50)
-  description     String?
-  created_at      DateTime?     @default(now()) @db.Timestamptz(6)
-  checkpoint      checkpoint[]
-  locationtype    locationtype? @relation(fields: [locationtype_id], references: [locationtype_id], onUpdate: NoAction)
+model preRequisite {
+  modCode   String @map("mod_code") @db.VarChar(10)
+  requisite String @db.VarChar(10)
+
+  preRequisiteModCodeToModule   module @relation("preRequisiteModCodeToModule", fields: [modCode], references: [modCode], onDelete: NoAction, onUpdate: NoAction, map: "pre_requisite_mod_code_fk")
+  preRequisiteRequisiteToModule module @relation("preRequisiteRequisiteToModule", fields: [requisite], references: [modCode], onDelete: NoAction, onUpdate: NoAction, map: "pre_requisite_requisite_fk")
+
+  @@id([modCode, requisite])
+  @@map("pre_requisite")
 }
 
-model locationtype {
-  locationtype_id String     @id @db.VarChar(50)
-  description     String?
-  location        location[]
+model staff {
+  staffNo           String   @id @map("staff_no") @db.Char(4)
+  staffName         String   @map("staff_name") @db.VarChar(100)
+  supervisorStaffNo String?  @map("supervisor_staff_no") @db.Char(4)
+  dob               DateTime @db.Date
+  grade             String   @db.VarChar(5)
+  maritalStatus     String   @map("marital_status") @db.VarChar(1)
+  pay               Decimal? @db.Decimal(7, 2)
+  allowance         Decimal? @db.Decimal(7, 2)
+  hourlyRate        Decimal? @map("hourly_rate") @db.Decimal(7, 2)
+  gender            String   @db.Char(1)
+  citizenship       String   @db.VarChar(10)
+  joinYr            Int      @map("join_yr")
+  deptCode          String   @map("dept_code") @db.VarChar(5)
+  typeOfEmployment  String   @map("type_of_employment") @db.VarChar(2)
+  highestQln        String   @map("highest_qln") @db.VarChar(10)
+  designation       String   @db.VarChar(20)
+
+  departmentHodTostaff      department[]     @relation("departmentHodToStaff")
+  module                    module[]
+  staffDeptCodeToDepartment department       @relation("staffDeptCodeToDepartment", fields: [deptCode], references: [deptCode], onDelete: NoAction, onUpdate: NoAction, map: "staff_dept_code_fk")
+  staffDependent            staffDependent[]
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model no_of_completed_checkpoints {
-  count BigInt?
+model staffBackup {
+  staffNo          String   @id @map("staff_no") @db.Char(4)
+  staffName        String   @map("staff_name") @db.VarChar(100)
+  supervisor       String?  @db.Char(4)
+  dob              DateTime @db.Date
+  grade            String   @db.VarChar(5)
+  maritalStatus    String   @map("marital_status") @db.VarChar(1)
+  pay              Decimal? @db.Decimal(7, 2)
+  allowance        Decimal? @db.Decimal(7, 2)
+  hourlyRate       Decimal? @map("hourly_rate") @db.Decimal(7, 2)
+  gender           String   @db.Char(1)
+  citizenship      String   @db.VarChar(10)
+  joinYr           Int      @map("join_yr")
+  deptCode         String   @map("dept_code") @db.VarChar(5)
+  typeOfEmployment String   @map("type_of_employment") @db.VarChar(2)
+  highestQln       String   @map("highest_qln") @db.VarChar(10)
+  designation      String   @db.VarChar(20)
 
-  @@ignore
+  @@map("staff_backup")
 }
 
-model permission {
-  permission_id   Int              @id
-  permission_name String           @unique @db.VarChar(100)
-  description     String?
-  rolepermission  rolepermission[]
+model staffDependent {
+  staffNo       String @map("staff_no") @db.Char(4)
+  dependentName String @map("dependent_name") @db.VarChar(30)
+  relationship  String @db.VarChar(20)
+
+  staff staff @relation(fields: [staffNo], references: [staffNo], onDelete: NoAction, onUpdate: NoAction, map: "staff_dependent_staff_no_fk")
+
+  @@id([staffNo, dependentName])
+  @@map("staff_dependent")
 }
 
-model question {
-  question_id    Int              @id @default(autoincrement())
-  question       String
-  quiz_id        Int?
-  quiz           quiz?            @relation(fields: [quiz_id], references: [quiz_id], onUpdate: NoAction)
-  questionoption questionoption[]
+model studModPerformance {
+  admNo         String  @map("adm_no") @db.Char(4)
+  modRegistered String  @map("mod_registered") @db.VarChar(10)
+  mark          Int?
+  grade         String? @db.Char(2)
+
+  student student @relation(fields: [admNo], references: [admNo], onDelete: NoAction, onUpdate: NoAction)
+  module  module  @relation(fields: [modRegistered], references: [modCode], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([admNo, modRegistered])
+  @@map("stud_mod_performance")
 }
 
-model questionoption {
-  option_id   Int      @id @default(autoincrement())
-  option      String
-  is_correct  Boolean
-  question_id Int
-  question    question @relation(fields: [question_id], references: [question_id], onDelete: Cascade, onUpdate: NoAction)
+model student {
+  admNo       String   @id @map("adm_no") @db.Char(4)
+  studName    String   @map("stud_name") @db.VarChar(30)
+  gender      String   @db.Char(1)
+  address     String   @db.VarChar(100)
+  mobilePhone String?  @map("mobile_phone") @db.Char(8)
+  homePhone   String?  @map("home_phone") @db.Char(8)
+  dob         DateTime @db.Date
+  nationality String   @db.VarChar(30)
+  crseCode    String   @map("crse_code") @db.VarChar(5)
+
+  studModPerformance studModPerformance[]
+  course             course               @relation(fields: [crseCode], references: [crseCode], onDelete: NoAction, onUpdate: NoAction, map: "student_crse_code_fk")
+  country            country              @relation(fields: [nationality], references: [countryName], onDelete: NoAction, onUpdate: NoAction, map: "student_nationality_fk")
 }
 
-model quiz {
-  quiz_id            Int                  @id @default(autoincrement())
-  quiz_title         String               @unique @db.VarChar(255)
-  description        String?
-  checkpoint         checkpoint[]
-  question           question[]
-  userquizcompletion userquizcompletion[]
+model userAccount {
+  id        Int    @id
+  accountNo String @map("account_no") @db.VarChar(6)
+  role      Int
+  password  String @db.VarChar(255)
+
+  @@map("user_account")
 }
 
-model review {
-  review_id   Int       @id @default(autoincrement())
-  user_id     Int?
-  tour_id     Int
-  review_text String
-  rating      Int
-  created_at  DateTime? @default(now()) @db.Timestamptz(6)
-  tour        tour      @relation(fields: [tour_id], references: [tour_id], onDelete: Cascade, onUpdate: NoAction)
-  users       users?    @relation(fields: [user_id], references: [user_id], onUpdate: NoAction)
-}
+model userRole {
+  id   Int    @id
+  name String @db.VarChar(25)
 
-model role {
-  role_id        Int              @id
-  role_name      String           @unique @db.VarChar(30)
-  description    String?
-  rolepermission rolepermission[]
-  userrole       userrole[]
-}
-
-model rolepermission {
-  role_id       Int
-  permission_id Int
-  created_at    DateTime?  @default(now()) @db.Timestamptz(6)
-  permission    permission @relation(fields: [permission_id], references: [permission_id], onDelete: Cascade, onUpdate: NoAction)
-  role          role       @relation(fields: [role_id], references: [role_id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@id([role_id, permission_id])
-}
-
-model sessions {
-  session_id   Int        @id @default(autoincrement())
-  user_id      Int?
-  access_token String?    @db.VarChar(255)
-  is_active    Boolean?   @default(true)
-  login_at     DateTime?  @default(now()) @db.Timestamptz(6)
-  logout_at    DateTime?  @db.Timestamptz(6)
-  auditlog     auditlog[]
-  users        users?     @relation(fields: [user_id], references: [user_id], onUpdate: NoAction)
-}
-
-model tour {
-  tour_id            Int                  @id @default(autoincrement())
-  tour_name          String               @unique @db.VarChar(255)
-  description        String?
-  created_at         DateTime?            @default(now()) @db.Timestamptz(6)
-  badge              badge[]
-  review             review[]
-  tourcheckpoint     tourcheckpoint[]
-  usertourcompletion usertourcompletion[]
-}
-
-model tourcheckpoint {
-  tour_id          Int
-  checkpoint_id    Int
-  checkpoint_order Int
-  checkpoint       checkpoint @relation(fields: [checkpoint_id], references: [checkpoint_id], onDelete: Cascade, onUpdate: NoAction)
-  tour             tour       @relation(fields: [tour_id], references: [tour_id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@id([tour_id, checkpoint_id])
-}
-
-model userbadge {
-  badge_id   Int
-  user_id    Int
-  created_at DateTime? @default(now()) @db.Timestamptz(6)
-  badge      badge     @relation(fields: [badge_id], references: [badge_id], onDelete: Cascade, onUpdate: NoAction)
-  users      users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@id([badge_id, user_id])
-}
-
-model usercheckpointattempt {
-  checkpointattempt_id Int                @id @default(autoincrement())
-  user_id              Int
-  checkpoint_id        Int?
-  tourcompletion_id    Int
-  created_at           DateTime?          @default(now()) @db.Timestamptz(6)
-  checkpoint           checkpoint?        @relation(fields: [checkpoint_id], references: [checkpoint_id], onUpdate: NoAction)
-  usertourcompletion   usertourcompletion @relation(fields: [tourcompletion_id], references: [tourcompletion_id], onDelete: Cascade, onUpdate: NoAction)
-  users                users              @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
-}
-
-model userprofile {
-  profile_id Int       @id @default(autoincrement())
-  user_id    Int       @unique
-  points     Int?      @default(0)
-  level      Int?      @default(0)
-  first_name String    @db.VarChar(100)
-  last_name  String    @db.VarChar(100)
-  school     String?   @db.VarChar(255)
-  sec_level  sec_level
-  created_at DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at DateTime? @db.Timestamptz(6)
-  users      users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
-}
-
-model userquizcompletion {
-  quizcompletion_id Int       @id @default(autoincrement())
-  quiz_id           Int
-  user_id           Int
-  score             Int
-  created_at        DateTime? @default(now()) @db.Timestamptz(6)
-  quiz              quiz      @relation(fields: [quiz_id], references: [quiz_id], onDelete: Cascade, onUpdate: NoAction)
-  users             users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
-}
-
-model userrole {
-  user_id    Int       @unique
-  role_id    Int       @default(2)
-  created_at DateTime? @default(now()) @db.Timestamptz(6)
-  role       role      @relation(fields: [role_id], references: [role_id], onDelete: SetDefault, onUpdate: NoAction)
-  users      users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@id([user_id, role_id])
-}
-
-model users {
-  user_id               Int                     @id @default(autoincrement())
-  username              String                  @unique @db.VarChar(30)
-  email                 String                  @unique @db.VarChar(255)
-  password              String                  @db.Char(60)
-  is_verified           Boolean?                @default(false)
-  created_at            DateTime?               @default(now()) @db.Timestamptz(6)
-  updated_at            DateTime?               @db.Timestamptz(6)
-  auditlog              auditlog[]
-  review                review[]
-  sessions              sessions[]
-  userbadge             userbadge[]
-  usercheckpointattempt usercheckpointattempt[]
-  userprofile           userprofile?
-  userquizcompletion    userquizcompletion[]
-  userrole              userrole?
-  usertourcompletion    usertourcompletion[]
-}
-
-model usertourcompletion {
-  tourcompletion_id     Int                     @id @default(autoincrement())
-  user_id               Int
-  tour_id               Int?
-  completed             Boolean?                @default(false)
-  completed_at          DateTime?               @db.Timestamptz(6)
-  created_at            DateTime?               @default(now()) @db.Timestamptz(6)
-  usercheckpointattempt usercheckpointattempt[]
-  tour                  tour?                   @relation(fields: [tour_id], references: [tour_id], onUpdate: NoAction)
-  users                 users                   @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
-}
-
-enum sec_level {
-  Sec1
-  Sec2
-  Sec3
-  Sec4
-  Sec5
-  Other
+  @@map("user_role")
 }
