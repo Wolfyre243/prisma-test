@@ -250,7 +250,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\USER\\Desktop\\SP Files\\DBS\\prisma-test\\src\\generated\\prisma",
+      "value": "C:\\Users\\wolfy\\Desktop\\SP Files\\DBS\\prisma-test\\src\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -267,7 +267,7 @@ const config = {
       "postgresqlExtensions",
       "relationJoins"
     ],
-    "sourceFilePath": "C:\\Users\\USER\\Desktop\\SP Files\\DBS\\prisma-test\\src\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\wolfy\\Desktop\\SP Files\\DBS\\prisma-test\\src\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -281,6 +281,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
