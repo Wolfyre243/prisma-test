@@ -98,16 +98,12 @@ module.exports.retrieveByCode = function retrieveByCode(code) {
             }
         })
         .then(function (module) {
+            if (!module) throw { status: 404, message: "Module not found" };
+            
+            console.log(`Retrieved module ${module}`);
             return module
         })
         .catch(function (e) {
-            // Prisma error codes: https://www.prisma.io/docs/orm/reference/error-reference#p2025
-            if (e instanceof Prisma.PrismaClientKnownRequestError) {
-                // The .code property can be accessed in a type-safe manner
-                if (e.code === "P2025") {
-                    console.log("Module not found");
-                }
-            }
-            throw { status: 404, message: "Module not found" };
+            throw e;
         });
 };
