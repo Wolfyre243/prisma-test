@@ -34,9 +34,7 @@ function getCitizenshipWithoutDuplicates() {
       citizenship: true,
     },
     distinct: ["citizenship"],
-		orderBy: [
-			{ citizenship: 'desc' }
-		]
+    orderBy: [{ citizenship: "desc" }],
   });
 }
 
@@ -51,9 +49,7 @@ function getStaffofSpecificCitizenships() {
     where: {
       citizenship: { in: ["Hong Kong", "Korea", "Malaysia", "Thailand"] },
     },
-		orderBy: [
-			{ citizenship: 'asc' }
-		]
+    orderBy: [{ citizenship: "asc" }],
   });
 }
 
@@ -110,11 +106,10 @@ async function getStaffByCriteria1() {
     },
     orderBy: [{ gender: "asc" }, { pay: "asc" }],
   });
-	return results.map(r => ({
+  return results.map((r) => ({
     ...r,
     pay: r.pay && parseFloat(r.pay),
   }));
-
 }
 
 /** Section C: Relation Queries */
@@ -160,19 +155,18 @@ const getDepartmentCourseStudentDob = () => {
   return prisma.department.findMany({
     where: {
       course: {
-        // at least 1 course
-        some: {
-          student: {
-            // course has at least 1 student
-            some: {},
-          },
-        },
+        some: {},
       },
     },
     select: {
       deptName: true,
       course: {
         // join coruse table
+        where: {
+          student: {
+            some: {},
+          },
+        },
         select: {
           crseName: true,
           student: {
@@ -234,7 +228,7 @@ async function main(argument) {
       console.log("Invalid argument");
       break;
   }
-  results && console.dir(results, { depth: 1 });
+  results && console.dir(results, { depth: null });
 }
 
 main(process.argv[2]);
