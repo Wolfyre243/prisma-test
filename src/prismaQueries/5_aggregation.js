@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { PrismaClient } = require("../generated/prisma");
 const prisma = new PrismaClient();
 
@@ -98,6 +99,25 @@ function getMeanPayTotalPayAndNoOfStaffByDesignation() {
 function getTotalPayAndNoOfStaffByDeptWithHighTotal() {
   return prisma.staff.groupBy({
     //TODO: Implement the query
+    by: ['deptCode'],
+    _sum: {
+      pay: true
+    },
+    _count: {
+      staffNo: true
+    },
+    having: {
+      pay: {
+        _sum: {
+          gt: 20000
+        }
+      }
+    },
+    orderBy: {
+      _sum: {
+        pay: 'desc'
+      }
+    }
   });
 }
 
